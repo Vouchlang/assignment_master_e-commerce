@@ -19,6 +19,8 @@ class EditAccScreen extends StatefulWidget {
 }
 
 class _EditAccScreenState extends State<EditAccScreen> {
+  List<UserAcc> dataUser = [];
+
   final _formKey = GlobalKey<FormState>();
   bool obscureText = true;
 
@@ -38,10 +40,8 @@ class _EditAccScreenState extends State<EditAccScreen> {
     _genderController = TextEditingController(text: widget.data_userAcc[0].gender);
     _addressController = TextEditingController(text: widget.data_userAcc[0].address);
     _mobileController = TextEditingController(text: widget.data_userAcc[0].mobile);
-  
   }
 
- 
   Future<void> _updateProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -65,12 +65,6 @@ class _EditAccScreenState extends State<EditAccScreen> {
           context: context,
           message: responseBody['message'],
           bgColor: Colors.green,
-        );
-      } else {
-        showCustomSnackBar(
-          context: context,
-          message: responseBody['message'],
-          bgColor: Colors.red,
         );
       }
     } catch (error) {
@@ -140,7 +134,10 @@ class _EditAccScreenState extends State<EditAccScreen> {
                     obscureText: obscureText,
                     decoration: InputDecoration(
                       fillColor: cWhite,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 5,
+                      ),
                       suffix: InkWell(
                         splashColor: Colors.transparent,
                         onTap: () {
@@ -191,11 +188,23 @@ class _EditAccScreenState extends State<EditAccScreen> {
                 InkWell(
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
-                  onTap: () {
-                    _updateProfile();
-                    Get.to(
+                  onTap: () async {
+                    await _updateProfile();
+
+                    List<UserAcc> updatedUserData = [
+                      UserAcc(
+                        username: _usernameController.text,
+                        password: _passwordController.text,
+                        email: _emailController.text,
+                        gender: _genderController.text,
+                        address: _addressController.text,
+                        mobile: _mobileController.text,
+                      ),
+                    ];
+
+                    Get.off(
                       () => BottomBar(
-                        data_userAcc: widget.data_userAcc,
+                        data_userAcc: updatedUserData,
                         currentIndex: 3,
                       ),
                     );

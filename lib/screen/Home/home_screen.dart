@@ -3,7 +3,8 @@ import 'package:e_commerce/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../build_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,11 +15,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Item> item = [];
   int amount = 0;
   bool isClicked = false;
-  // int getTotalPrice() {
-  //   return itemList.fold(0, (sum, item) => sum + item.price);
-  // }
+  int getTotalPrice() {
+    return item.fold(0, (sum, item) => sum + item.price);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getItem();
+  }
+
+  Future<void> getItem() async {
+    final response = await http.get(Uri.parse('${apiEndpoint}fetch_product.php'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = json.decode(response.body);
+      setState(() {
+        item = jsonData.map((item) => Item.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load items');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(15),
-        itemCount: itemList.length,
+        itemCount: item.length,
         itemBuilder: (context, index) {
           return Stack(
             children: [
@@ -111,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           topRight: Radius.circular(15),
                         ),
                         image: DecorationImage(
-                          image: AssetImage(itemList[index].image),
+                          image: NetworkImage('http://192.168.0.127:80/e-commerce-assignment-mba-images/${item[index].image}'),
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -119,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      itemList[index].name,
+                      item[index].name,
                       style: GoogleFonts.merriweather(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -170,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                               Text(
-                                '${itemList[index].sold} sold',
+                                '${item[index].sold} sold',
                                 style: GoogleFonts.merriweather(
                                   fontSize: 12,
                                   color: Colors.grey[700],
@@ -185,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '\$${itemList[index].price.toString()}',
+                                '\$${item[index].price.toString()}',
                                 style: GoogleFonts.merriweather(
                                   fontSize: 18,
                                   color: cPrimary,

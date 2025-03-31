@@ -42,9 +42,9 @@ class _LoginFormState extends State<LoginForm> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data != null) {
-          final studentUserData = data['user'];
+          final userData = data['user'];
           List<UserAcc> dataUser = [];
-          for (var item in studentUserData) {
+          for (var item in userData) {
             UserAcc userModel = UserAcc(
               username: item['username'],
               email: item['email'],
@@ -62,10 +62,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
           );
         } else {
-          _showErrorDialog('Invalid credentials');
+          return;
         }
       } else {
-        _showErrorDialog('An error occurred while logging in');
+        _showErrorDialog('Invalid credentials');
       }
     } catch (error) {
       _showErrorDialog('Failed to connect to the server');

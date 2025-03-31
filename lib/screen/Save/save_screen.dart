@@ -16,6 +16,8 @@ class SaveScreen extends StatefulWidget {
 }
 
 class _SaveScreenState extends State<SaveScreen> {
+  List<Item> itemList = [];
+
   int amount = 0;
   bool isSaved = true;
   @override

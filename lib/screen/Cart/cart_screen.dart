@@ -15,7 +15,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  List<Item> itemList = [];
+
   int amount = 1;
+
   bool isSaved = true;
   int getTotalPrice(int amount) {
     return itemList.fold(0, (sum, item) => sum + (item.price * amount));

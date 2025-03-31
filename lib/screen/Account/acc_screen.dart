@@ -20,27 +20,20 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  List<UserAcc> dataUser = [];
+
   final List<String> _languageList = ['English', 'Khmer', 'Chinese'];
   String _languageType = 'English';
 
   final _formKey = GlobalKey<FormState>();
-
   late TextEditingController _passwordController;
   late TextEditingController _emailController;
-  late TextEditingController _usernameController;
-  late TextEditingController _genderController;
-  late TextEditingController _addressController;
-  late TextEditingController _mobileController;
 
   @override
   void initState() {
     super.initState();
     _passwordController = TextEditingController(text: widget.data_userAcc[0].password);
     _emailController = TextEditingController(text: widget.data_userAcc[0].email);
-    _usernameController = TextEditingController(text: widget.data_userAcc[0].username);
-    _genderController = TextEditingController(text: widget.data_userAcc[0].gender);
-    _addressController = TextEditingController(text: widget.data_userAcc[0].address);
-    _mobileController = TextEditingController(text: widget.data_userAcc[0].mobile);
     getData();
   }
 
@@ -58,7 +51,6 @@ class _AccountScreenState extends State<AccountScreen> {
         final data = json.decode(response.body);
         if (data != null) {
           final studentUserData = data['user'];
-          List<UserAcc> dataUser = [];
           for (var item in studentUserData) {
             UserAcc userModel = UserAcc(
               username: item['username'],
@@ -75,6 +67,12 @@ class _AccountScreenState extends State<AccountScreen> {
     } catch (error) {
       return;
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getData();
   }
 
   Future<void> _deleteProfile() async {
@@ -232,273 +230,268 @@ class _AccountScreenState extends State<AccountScreen> {
           const SizedBox(width: 15),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: getData,
-        color: cPrimary,
-        backgroundColor: cWhite,
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(
-                          child: buildLabelText('Username'),
-                        ),
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        child: buildLabelText('Username'),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          child: buildLabelText('Gender'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: buildTextBox(
-                          text: widget.data_userAcc[0].username,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 1,
-                        child: buildTextBox(
-                          text: widget.data_userAcc[0].gender,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                  buildLabelText('Email'),
-                  buildTextBox(
-                    text: widget.data_userAcc[0].email,
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          child: buildLabelText('Address'),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: SizedBox(
-                          child: buildLabelText('Mobile Number'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: buildTextBox(
-                          text: widget.data_userAcc[0].address,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: buildTextBox(
-                          text: widget.data_userAcc[0].mobile,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                  buildLabelText('Language Perference'),
-                  buildDropDown(
-                    width: MediaQuery.of(context).size.width / 1.13,
-                    value: _languageType,
-                    valueList: _languageList,
-                    function: (value) {
-                      setState(() {
-                        _languageType = value!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  buildLabelText('Support'),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: cSecondary), color: cWhite),
-                    child: Column(
-                      children: [
-                        buildSpp('Rate this App'),
-                        const SizedBox(height: 5),
-                        buildSpp('Privacy Policy'),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          height: 45,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'FAQ & Guide',
-                                style: GoogleFonts.merriweather(),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 14,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        child: buildLabelText('Gender'),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: buildTextBox(
+                        text: widget.data_userAcc[0].username,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: buildTextBox(
+                        text: widget.data_userAcc[0].gender,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                buildLabelText('Email'),
+                buildTextBox(
+                  text: widget.data_userAcc[0].email,
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        child: buildLabelText('Address'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: SizedBox(
+                        child: buildLabelText('Mobile Number'),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextBox(
+                        text: widget.data_userAcc[0].address,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: buildTextBox(
+                        text: widget.data_userAcc[0].mobile,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                buildLabelText('Language Perference'),
+                buildDropDown(
+                  width: MediaQuery.of(context).size.width / 1.13,
+                  value: _languageType,
+                  valueList: _languageList,
+                  function: (value) {
+                    setState(() {
+                      _languageType = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 15),
+                buildLabelText('Support'),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: cSecondary), color: cWhite),
+                  child: Column(
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext buildContext) {
-                                return Dialog(
-                                  backgroundColor: cWhite,
-                                  elevation: 50,
-                                  child: Container(
-                                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 25),
-                                    height: 165,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Delete Account',
+                      buildSpp('Rate this App'),
+                      const SizedBox(height: 5),
+                      buildSpp('Privacy Policy'),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        height: 45,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'FAQ & Guide',
+                              style: GoogleFonts.merriweather(),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext buildContext) {
+                              return Dialog(
+                                backgroundColor: cWhite,
+                                elevation: 50,
+                                child: Container(
+                                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 25),
+                                  height: 165,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            'Delete Account',
+                                            style: GoogleFonts.merriweather(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            'Are you sure, You want to delete this account?',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.merriweather(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              _deleteProfile();
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (buildContext) => const LoginForm(),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Yes',
+                                              style: GoogleFonts.merriweather(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 75),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'No',
                                               style: GoogleFonts.merriweather(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              'Are you sure, You want to delete this account?',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.merriweather(fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                _deleteProfile();
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (buildContext) => const LoginForm(),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                'Yes',
-                                                style: GoogleFonts.merriweather(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 75),
-                                            InkWell(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                'No',
-                                                style: GoogleFonts.merriweather(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black87,
-                              border: Border.all(color: cWhite),
-                            ),
-                            height: 45,
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Delete this Account',
-                              style: GoogleFonts.merriweather(
-                                color: cWhite,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black87,
+                            border: Border.all(color: cWhite),
+                          ),
+                          height: 45,
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Delete this Account',
+                            style: GoogleFonts.merriweather(
+                              color: cWhite,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 1,
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            Get.to(
-                              () => EditAccScreen(
-                                data_userAcc: widget.data_userAcc,
-                              ),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black87,
-                              border: Border.all(color: cWhite),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          Get.to(
+                            () => EditAccScreen(
+                              data_userAcc: dataUser,
                             ),
-                            height: 45,
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Edit Profile',
-                              style: GoogleFonts.merriweather(
-                                color: cWhite,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black87,
+                            border: Border.all(color: cWhite),
+                          ),
+                          height: 45,
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Edit Profile',
+                            style: GoogleFonts.merriweather(
+                              color: cWhite,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+              ],
             ),
           ),
         ),
