@@ -2,26 +2,39 @@ import 'package:e_commerce/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'Account/acc_class.dart';
 import 'Account/acc_screen.dart';
 import 'Cart/cart_screen.dart';
 import 'Home/home_screen.dart';
 import 'Save/save_screen.dart';
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+  final List<UserAcc> data_userAcc;
+  final int currentIndex;
+  const BottomBar({
+    super.key,
+    required this.data_userAcc,
+    this.currentIndex = 0,
+  });
 
   @override
   State<BottomBar> createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int currentIndex = 0; // Current selected index
+  int currentIndex = 0;
 
-  final List<Widget> pages = const [
-    HomeScreen(),
-    SaveScreen(),
-    CartScreen(),
-    AccountScreen(),
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = widget.currentIndex;
+  }
+
+  late List<Widget> pages = [
+    const HomeScreen(),
+    SaveScreen(data_userAcc: widget.data_userAcc),
+    CartScreen(data_userAcc: widget.data_userAcc),
+    AccountScreen(data_userAcc: widget.data_userAcc),
   ];
 
   @override
@@ -29,7 +42,7 @@ class _BottomBarState extends State<BottomBar> {
     return Scaffold(
       body: pages[currentIndex],
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor:  cBGColor,
+        backgroundColor: cBGColor,
         color: cWhite,
         buttonBackgroundColor: cWhite,
         animationDuration: const Duration(milliseconds: 300),

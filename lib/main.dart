@@ -1,5 +1,6 @@
 import 'package:e_commerce/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'login_form.dart';
 
 void main() {
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         primaryColor: cPrimary,
         useMaterial3: true,

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../build_widget.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -14,6 +16,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int amount = 0;
   bool isClicked = false;
+  // int getTotalPrice() {
+  //   return itemList.fold(0, (sum, item) => sum + item.price);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +46,18 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: TextField(
-            cursorColor: Colors.black,
+            style: GoogleFonts.merriweather(),
+            cursorColor: Colors.grey,
+            keyboardType: TextInputType.text,
             decoration: InputDecoration(
               hintText: "\tSearch Item...",
-              hintStyle: GoogleFonts.nunito(
+              hintStyle: GoogleFonts.merriweather(
                 fontSize: 16,
-                color: Colors.black54,
+                color: Colors.grey,
                 fontWeight: FontWeight.bold,
               ),
-              prefixIcon: const Icon(Icons.search),
+              labelStyle: GoogleFonts.merriweather(),
+              // prefixIcon: const Icon(Icons.search),
               suffixIcon: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -63,7 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 10,
+              ),
             ),
           ),
         ),
@@ -84,26 +95,20 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: const Color(0x3AE9E7E7),
-                  boxShadow: const [
-                    BoxShadow(
-                      offset: Offset(2, 2),
-                      color: cWhite,
-                    ),
-                    BoxShadow(
-                      offset: Offset(-2, -2),
-                      color: cWhite,
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey[50],
+                  border: Border.all(
+                    color: cSecondary,
+                    width: 1.5,
+                  ),
                 ),
                 child: Column(
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
                         ),
                         image: DecorationImage(
                           image: AssetImage(itemList[index].image),
@@ -115,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 5),
                     Text(
                       itemList[index].name,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.merriweather(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -125,28 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                itemList[index].price,
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  color: cPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${itemList[index].sold} sold',
-                                style: GoogleFonts.nunito(
-                                  fontSize: 12,
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
                           const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,15 +146,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: const Icon(
                                       Icons.remove,
                                       size: 14,
-                                      color: Colors.black54,
+                                      color: cSecondary,
                                     ),
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
                                     amount.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                    ),
+                                    style: GoogleFonts.merriweather(color: cSecondary),
                                   ),
                                   const SizedBox(width: 5),
                                   InkWell(
@@ -183,26 +164,40 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: const Icon(
                                       Icons.add,
                                       size: 14,
-                                      color: Colors.black54,
+                                      color: cSecondary,
                                     ),
                                   ),
                                 ],
                               ),
+                              Text(
+                                '${itemList[index].sold} sold',
+                                style: GoogleFonts.merriweather(
+                                  fontSize: 12,
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '\$${itemList[index].price.toString()}',
+                                style: GoogleFonts.merriweather(
+                                  fontSize: 18,
+                                  color: cPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               InkWell(
                                 onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        "Your Item has added to Cart!",
-                                        style: TextStyle(color: cWhite),
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      duration: const Duration(seconds: 2),
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
+                                  showCustomSnackBar(
+                                    context: context,
+                                    message: 'Your Item has added to Cart!',
+                                    bgColor: Colors.green,
                                   );
                                 },
                                 child: const FaIcon(
@@ -229,38 +224,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: isClicked ? Colors.red : Colors.grey,
                   ),
                   onTap: () {
-                    setState(() {
-                      isClicked = !isClicked;
-                      isClicked
-                          ? ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  "Item has added to Save List.",
-                                  style: TextStyle(color: cWhite),
-                                ),
-                                backgroundColor: Colors.green,
-                                duration: const Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            )
-                          : ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  "Item has been removed from Save List.",
-                                  style: TextStyle(color: cWhite),
-                                ),
-                                backgroundColor: Colors.red,
-                                duration: const Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            );
-                    });
+                    setState(
+                      () {
+                        isClicked = !isClicked;
+                        isClicked
+                            ? showCustomSnackBar(
+                                context: context,
+                                message: 'Item has added to save list.',
+                                bgColor: Colors.green,
+                              )
+                            : showCustomSnackBar(
+                                context: context,
+                                message: 'Item has been removed from save list.',
+                                bgColor: Colors.red,
+                              );
+                      },
+                    );
                   },
                 ),
               ),
