@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'acc_class.dart';
 import 'account_model.dart';
 import 'package:http/http.dart' as http;
@@ -53,6 +54,7 @@ class _AccountScreenState extends State<AccountScreen> {
           final studentUserData = data['user'];
           for (var item in studentUserData) {
             UserAcc userModel = UserAcc(
+              userId: int.parse(item['id'].toString()),
               username: item['username'],
               email: item['email'],
               password: item['password'],
@@ -173,13 +175,10 @@ class _AccountScreenState extends State<AccountScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               InkWell(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (buildContext) => const LoginForm(),
-                                    ),
-                                  );
+                                onTap: () async {
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  await prefs.clear();
+                                  Get.off(() => const LoginForm());
                                 },
                                 child: Text(
                                   'Yes',
@@ -399,12 +398,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                           InkWell(
                                             onTap: () {
                                               _deleteProfile();
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (buildContext) => const LoginForm(),
-                                                ),
-                                              );
+                                              Get.off(() => const LoginForm());
                                             },
                                             child: Text(
                                               'Yes',

@@ -1,6 +1,7 @@
 import 'package:e_commerce/form_model.dart';
 import 'package:e_commerce/login_form.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,8 +23,14 @@ class _SignUpFormState extends State<SignUpForm> {
   final _addressController = TextEditingController();
   final _mobileController = TextEditingController();
 
+  String _username = '';
+  String _email = '';
+  String _password = '';
+  String _gender = '';
+  String _address = '';
+  String _mobile = '';
+
   bool obscureText = true;
-  bool _isLoading = false;
   final GlobalKey<FormState> globalKey = GlobalKey<FormState>();
 
   Future<void> _signup() async {
@@ -31,36 +38,23 @@ class _SignUpFormState extends State<SignUpForm> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
     final response = await http.post(
       Uri.parse('${apiEndpoint}user_signup.php'),
       body: {
-        "username": _usernameController.text,
-        "email": _emailController.text,
-        "password": _pswController.text,
-        "gender": _genderController.text,
-        "address": _addressController.text,
-        "mobile": _mobileController.text,
+        "username": _username,
+        "email": _email,
+        "password": _password,
+        "gender": _gender,
+        "address": _address,
+        "mobile": _mobile,
       },
     );
-
-    setState(() {
-      _isLoading = false;
-    });
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (responseData["status"] == "success") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (buildContext) => const SignUpForm(),
-          ),
-        );
+        Get.to(() => const LoginForm());
         showCustomSnackBar(
           context: context,
           message: 'Sign Up Successfully',
@@ -92,10 +86,10 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Form(
-          key: globalKey,
+      body: Form(
+        key: globalKey,
+        child: Padding(
+          padding: const EdgeInsets.all(15),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -114,7 +108,13 @@ class _SignUpFormState extends State<SignUpForm> {
                 buildSignUpTextFormField(
                   textController: _emailController,
                   text: 'Email',
-                  validator: (value) => value!.isEmpty ? "Enter Email" : null,
+                  onChanged: (value) => _email = value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 15),
                 Row(
@@ -123,7 +123,13 @@ class _SignUpFormState extends State<SignUpForm> {
                       child: buildSignUpTextFormField(
                         textController: _usernameController,
                         text: 'Username',
-                        validator: (value) => value!.isEmpty ? "Enter Username" : null,
+                        onChanged: (value) => _username = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your username';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -157,7 +163,13 @@ class _SignUpFormState extends State<SignUpForm> {
                           ),
                         ),
                         obscureText: obscureText,
-                        validator: (value) => value!.isEmpty ? "Enter Password" : null,
+                        onChanged: (value) => _password = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ],
@@ -169,7 +181,13 @@ class _SignUpFormState extends State<SignUpForm> {
                       child: buildSignUpTextFormField(
                         textController: _mobileController,
                         text: 'Mobile',
-                        validator: (value) => value!.isEmpty ? "Enter Mobile Number" : null,
+                        onChanged: (value) => _mobile = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your mobile number';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -177,7 +195,13 @@ class _SignUpFormState extends State<SignUpForm> {
                       child: buildSignUpTextFormField(
                         textController: _genderController,
                         text: 'Gender',
-                        validator: (value) => value!.isEmpty ? "Enter Gender" : null,
+                        onChanged: (value) => _gender = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your gender';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ],
@@ -186,34 +210,38 @@ class _SignUpFormState extends State<SignUpForm> {
                 buildSignUpTextFormField(
                   textController: _addressController,
                   text: 'Address',
-                  validator: (value) => value!.isEmpty ? "Enter Address" : null,
+                  onChanged: (value) => _address = value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your address';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 30),
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : InkWell(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        onTap: () {
-                          _signup();
-                        },
-                        child: Card(
-                          color: cPrimary,
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: double.infinity,
-                            height: 45,
-                            child: Text(
-                              'Sign Up',
-                              style: GoogleFonts.merriweather(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: cWhite,
-                              ),
-                            ),
-                          ),
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    _signup();
+                  },
+                  child: Card(
+                    color: cPrimary,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: 45,
+                      child: Text(
+                        'Sign Up',
+                        style: GoogleFonts.merriweather(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: cWhite,
                         ),
                       ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -229,12 +257,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext) => const LoginForm(),
-                          ),
-                        );
+                        Get.to(() => const LoginForm());
                       },
                       child: Text(
                         'Log In',

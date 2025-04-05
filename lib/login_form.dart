@@ -2,8 +2,10 @@ import 'package:e_commerce/screen/bottom_bar.dart';
 import 'package:e_commerce/sign_up_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'build_widget.dart';
 import 'screen/Account/acc_class.dart';
@@ -19,11 +21,18 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _pswController = TextEditingController();
-  bool obscureText = true;
   String _email = '';
   String _password = '';
+
+  bool obscureText = true;
   bool isChanged = false;
   final GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
 
   Future<void> _login() async {
     if (!globalKey.currentState!.validate()) {
@@ -46,6 +55,7 @@ class _LoginFormState extends State<LoginForm> {
           List<UserAcc> dataUser = [];
           for (var item in userData) {
             UserAcc userModel = UserAcc(
+              userId: int.parse(item['id'].toString()),
               username: item['username'],
               email: item['email'],
               password: item['password'],
@@ -55,12 +65,16 @@ class _LoginFormState extends State<LoginForm> {
             );
             dataUser.add(userModel);
           }
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (buildContext) => BottomBar(data_userAcc: dataUser),
-            ),
-          );
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          if (isChanged) {
+            await prefs.setBool('isLoggedIn', true);
+            await prefs.setString('email', _email);
+            await prefs.setString('password', _password);
+          } else {
+            await prefs.clear();
+          }
+
+          Get.off(() => BottomBar(data_userAcc: dataUser));
         } else {
           return;
         }
@@ -69,6 +83,46 @@ class _LoginFormState extends State<LoginForm> {
       }
     } catch (error) {
       _showErrorDialog('Failed to connect to the server');
+    }
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      String savedEmail = prefs.getString('email') ?? '';
+      String savedPassword = prefs.getString('password') ?? '';
+
+      // Auto-login
+      final response = await http.post(
+        Uri.parse('${apiEndpoint}user_login.php'),
+        body: {
+          'email': savedEmail,
+          'password': savedPassword,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data != null) {
+          final userData = data['user'];
+          List<UserAcc> dataUser = [];
+          for (var item in userData) {
+            UserAcc userModel = UserAcc(
+              userId: int.parse(item['id'].toString()),
+              username: item['username'],
+              email: item['email'],
+              password: item['password'],
+              gender: item['gender'],
+              address: item['address'],
+              mobile: item['mobile'],
+            );
+            dataUser.add(userModel);
+          }
+          Get.off(() => BottomBar(data_userAcc: dataUser));
+        }
+      }
     }
   }
 
@@ -226,12 +280,7 @@ class _LoginFormState extends State<LoginForm> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext) => const SignUpForm(),
-                          ),
-                        );
+                        Get.to(() => const SignUpForm());
                       },
                       child: Text(
                         'Sign Up',

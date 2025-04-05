@@ -24,6 +24,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
   final _formKey = GlobalKey<FormState>();
   bool obscureText = true;
 
+  late TextEditingController _userIdController;
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
   late TextEditingController _emailController;
@@ -34,6 +35,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
   @override
   void initState() {
     super.initState();
+    _userIdController = TextEditingController(text: widget.data_userAcc[0].userId.toString());
     _usernameController = TextEditingController(text: widget.data_userAcc[0].username);
     _passwordController = TextEditingController(text: widget.data_userAcc[0].password);
     _emailController = TextEditingController(text: widget.data_userAcc[0].email);
@@ -193,6 +195,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
 
                     List<UserAcc> updatedUserData = [
                       UserAcc(
+                        userId: int.parse(_userIdController.text),
                         username: _usernameController.text,
                         password: _passwordController.text,
                         email: _emailController.text,

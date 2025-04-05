@@ -31,7 +31,7 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   late List<Widget> pages = [
-    const HomeScreen(),
+    HomeScreen(data_userAcc: widget.data_userAcc),
     SaveScreen(data_userAcc: widget.data_userAcc),
     CartScreen(data_userAcc: widget.data_userAcc),
     AccountScreen(data_userAcc: widget.data_userAcc),

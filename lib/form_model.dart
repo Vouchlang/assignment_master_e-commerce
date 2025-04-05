@@ -5,6 +5,7 @@ import 'theme.dart';
 Widget buildSignUpTextFormField({
   required TextEditingController textController,
   required String text,
+  required Function(String) onChanged,
   required dynamic validator,
 }) {
   return TextFormField(
@@ -24,6 +25,7 @@ Widget buildSignUpTextFormField({
         borderSide: const BorderSide(color: cSecondary),
       ),
     ),
+    onChanged: onChanged,
     validator: validator,
   );
 }
