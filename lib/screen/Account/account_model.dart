@@ -1,5 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:e_commerce/screen/Account/acc_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme.dart';
@@ -72,72 +70,31 @@ Widget buildEditTextBox({
 }
 
 Widget buildSpp(
+  Function() customDialog,
   String text,
 ) {
-  return Container(
-    decoration: const BoxDecoration(
-      border: Border(
-        bottom: BorderSide(color: cSecondary),
-      ),
-    ),
-    height: 45,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          text,
-          style: GoogleFonts.merriweather(),
-        ),
-        const Icon(
-          Icons.arrow_forward_ios,
-          size: 14,
-        ),
-      ],
-    ),
-  );
-}
-
-Widget buildDropDown({
-  required double width,
-  required String value,
-  required List<String> valueList,
-  required dynamic function,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(5),
-    alignment: Alignment.centerLeft,
-    height: 45,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(
-        color: cSecondary,
-        width: 1,
-      ),
-      color: cWhite,
-    ),
-    child: DropdownButton2(
-      dropdownStyleData: DropdownStyleData(
-        elevation: 1,
-        width: width,
-        direction: DropdownDirection.textDirection,
-        decoration: const BoxDecoration(
-          color: cWhite,
+  return InkWell(
+    onTap: customDialog,
+    child: Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: cSecondary),
         ),
       ),
-      buttonStyleData: const ButtonStyleData(
-        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+      height: 45,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            text,
+            style: GoogleFonts.merriweather(),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
+          ),
+        ],
       ),
-      barrierColor: Colors.transparent,
-      isExpanded: true,
-      isDense: true,
-      style: GoogleFonts.merriweather(color: cSecondary),
-      value: value,
-      autofocus: false,
-      enableFeedback: true,
-      underline: const SizedBox(),
-      alignment: Alignment.topLeft,
-      items: dropDown(valueList),
-      onChanged: function,
     ),
   );
 }

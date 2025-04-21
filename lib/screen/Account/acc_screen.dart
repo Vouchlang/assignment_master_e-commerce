@@ -23,9 +23,6 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   List<UserAcc> dataUser = [];
 
-  final List<String> _languageList = ['English', 'Khmer', 'Chinese'];
-  String _languageType = 'English';
-
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _passwordController;
   late TextEditingController _emailController;
@@ -75,6 +72,49 @@ class _AccountScreenState extends State<AccountScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     getData();
+  }
+
+  void buildCustomDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext buildContext) {
+        return Dialog(
+          backgroundColor: cWhite,
+          elevation: 50,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(15, 15, 15, 25),
+            height: 165,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  'Coming Soon Buddy',
+                  style: GoogleFonts.merriweather(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Okay',
+                    style: GoogleFonts.merriweather(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _deleteProfile() async {
@@ -313,42 +353,39 @@ class _AccountScreenState extends State<AccountScreen> {
                   ],
                 ),
                 const SizedBox(height: 15),
-                buildLabelText('Language Perference'),
-                buildDropDown(
-                  width: MediaQuery.of(context).size.width / 1.13,
-                  value: _languageType,
-                  valueList: _languageList,
-                  function: (value) {
-                    setState(() {
-                      _languageType = value!;
-                    });
-                  },
-                ),
-                const SizedBox(height: 15),
                 buildLabelText('Support'),
                 Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: cSecondary), color: cWhite),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: cSecondary),
+                    color: cWhite,
+                  ),
                   child: Column(
                     children: [
-                      buildSpp('Rate this App'),
+                      buildSpp(buildCustomDialog, 'Rate this App'),
                       const SizedBox(height: 5),
-                      buildSpp('Privacy Policy'),
+                      buildSpp(buildCustomDialog, 'Privacy Policy'),
                       const SizedBox(height: 5),
-                      SizedBox(
-                        height: 45,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'FAQ & Guide',
-                              style: GoogleFonts.merriweather(),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 14,
-                            ),
-                          ],
+                      InkWell(
+                        onTap: () {
+                          buildCustomDialog();
+                        },
+                        child: SizedBox(
+                          height: 45,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'FAQ & Guide',
+                                style: GoogleFonts.merriweather(),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -396,9 +433,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           InkWell(
-                                            onTap: () {
-                                              _deleteProfile();
+                                            onTap: () async {
+                                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                                              await prefs.clear();
                                               Get.off(() => const LoginForm());
+                                              _deleteProfile();
                                             },
                                             child: Text(
                                               'Yes',
@@ -492,8 +531,4 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
     );
   }
-}
-
-List<DropdownMenuItem> dropDown(List items) {
-  return items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList();
 }

@@ -1,10 +1,8 @@
-import 'package:e_commerce/screen/Cart/add_to_cart_provider.dart';
 import 'package:e_commerce/screen/Home/home_class.dart';
 import 'package:e_commerce/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../build_widget.dart';
@@ -127,10 +125,35 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> addToCart(int itemIndex, String itemName) async {
+    final response = await http.post(
+      Uri.parse('${apiEndpoint}cart_insert.php'),
+      body: {
+        'email': widget.data_userAcc[0].email,
+        'password': widget.data_userAcc[0].password,
+        'productId': itemIndex.toString(),
+        'quantity': '1',
+      },
+    );
+
+    final result = json.decode(response.body);
+    if (result['status'] == 'success') {
+      showCustomSnackBar(
+        context: context,
+        message: '${itemName} has been added to Cart!',
+        bgColor: Colors.green,
+      );
+    } else {
+      showCustomSnackBar(
+        context: context,
+        message: result['message'],
+        bgColor: Colors.red,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final addToCartProvider = Provider.of<AddToCartProvider>(context);
-
     return Scaffold(
       backgroundColor: cBGColor,
       appBar: AppBar(
@@ -267,11 +290,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(height: 2),
                                   InkWell(
                                     onTap: () {
-                                      addToCartProvider.addItem(item[index], 1);
-                                      showCustomSnackBar(
-                                        context: context,
-                                        message: 'Your Item has added to Cart!',
-                                        bgColor: Colors.green,
+                                      addToCart(
+                                        item[index].id,
+                                        item[index].name,
                                       );
                                     },
                                     child: const FaIcon(
