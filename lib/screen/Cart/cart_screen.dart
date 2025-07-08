@@ -9,9 +9,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CartScreen extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
+  final List<UserAcc> dataUserAcc;
 
-  const CartScreen({super.key, required this.data_userAcc});
+  const CartScreen({super.key, required this.dataUserAcc});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -34,8 +34,8 @@ class _CartScreenState extends State<CartScreen> {
       final response = await http.post(
         Uri.parse('${apiEndpoint}cart_fetch.php'),
         body: {
-          'email': widget.data_userAcc[0].email,
-          'password': widget.data_userAcc[0].password,
+          'email': widget.dataUserAcc[0].email,
+          'password': widget.dataUserAcc[0].password,
         },
       );
       if (response.statusCode == 200) {
@@ -46,11 +46,13 @@ class _CartScreenState extends State<CartScreen> {
         });
       }
     } catch (e) {
-      showCustomSnackBar(
-        context: context,
-        message: 'Error: $e',
-        bgColor: Colors.red,
-      );
+      if (mounted) {
+        showCustomSnackBar(
+          context: context,
+          message: 'Error: $e',
+          bgColor: Colors.red,
+        );
+      }
     }
   }
 
@@ -58,8 +60,8 @@ class _CartScreenState extends State<CartScreen> {
     final response = await http.post(
       Uri.parse('${apiEndpoint}cart_remove.php'),
       body: {
-        'email': widget.data_userAcc[0].email,
-        'password': widget.data_userAcc[0].password,
+        'email': widget.dataUserAcc[0].email,
+        'password': widget.dataUserAcc[0].password,
         'productId': item.productId.toString(),
       },
     );
@@ -83,8 +85,8 @@ class _CartScreenState extends State<CartScreen> {
     final response = await http.post(
       Uri.parse('${apiEndpoint}cart_remove_all.php'),
       body: {
-        'email': widget.data_userAcc[0].email,
-        'password': widget.data_userAcc[0].password,
+        'email': widget.dataUserAcc[0].email,
+        'password': widget.dataUserAcc[0].password,
       },
     );
 
@@ -106,8 +108,8 @@ class _CartScreenState extends State<CartScreen> {
     final response = await http.post(
       Uri.parse('${apiEndpoint}cart_update.php'),
       body: {
-        'email': widget.data_userAcc[0].email,
-        'password': widget.data_userAcc[0].password,
+        'email': widget.dataUserAcc[0].email,
+        'password': widget.dataUserAcc[0].password,
         'productId': cartItem[index].productId.toString(),
         'quantity': newQuantity.toString(),
       },
@@ -142,7 +144,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _removeSelectedItems() async {
-    final user = widget.data_userAcc[0];
+    final user = widget.dataUserAcc[0];
 
     // Create a copy to avoid modifying list while iterating
     final List<CartItem> itemsToRemove = cartItem.where((item) => selectedProductIds.contains(item.productId)).toList();

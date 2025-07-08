@@ -9,8 +9,8 @@ import '../../build_widget.dart';
 import '../Account/acc_class.dart';
 
 class HomeScreen extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
-  const HomeScreen({super.key, required this.data_userAcc});
+  final List<UserAcc> dataUserAcc;
+  const HomeScreen({super.key, required this.dataUserAcc});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -42,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchSavedItems() async {
-    String email = widget.data_userAcc[0].email;
-    String password = widget.data_userAcc[0].password;
+    String email = widget.dataUserAcc[0].email;
+    String password = widget.dataUserAcc[0].password;
 
     final response = await http.post(
       Uri.parse('${apiEndpoint}item_fetch.php'),
@@ -64,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> saveAndRemoveItem(Item item, bool isSaved) async {
-    String email = widget.data_userAcc[0].email;
-    String password = widget.data_userAcc[0].password;
+    String email = widget.dataUserAcc[0].email;
+    String password = widget.dataUserAcc[0].password;
 
     try {
       if (isSaved) {
@@ -129,8 +129,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final response = await http.post(
       Uri.parse('${apiEndpoint}cart_insert.php'),
       body: {
-        'email': widget.data_userAcc[0].email,
-        'password': widget.data_userAcc[0].password,
+        'email': widget.dataUserAcc[0].email,
+        'password': widget.dataUserAcc[0].password,
         'productId': itemIndex.toString(),
         'quantity': '1',
       },

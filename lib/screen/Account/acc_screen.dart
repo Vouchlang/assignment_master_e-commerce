@@ -1,5 +1,6 @@
 import 'package:e_commerce/build_widget.dart';
 import 'package:e_commerce/login_form.dart';
+import 'package:e_commerce/screen/Account/change_password.dart';
 import 'package:e_commerce/screen/Account/edit_acc_screen.dart';
 import 'package:e_commerce/theme.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AccountScreen extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
-  const AccountScreen({super.key, required this.data_userAcc});
+  final List<UserAcc> dataUserAcc;
+  const AccountScreen({super.key, required this.dataUserAcc});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -30,8 +31,8 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     super.initState();
-    _passwordController = TextEditingController(text: widget.data_userAcc[0].password);
-    _emailController = TextEditingController(text: widget.data_userAcc[0].email);
+    _passwordController = TextEditingController(text: widget.dataUserAcc[0].password);
+    _emailController = TextEditingController(text: widget.dataUserAcc[0].email);
     getData();
   }
 
@@ -40,8 +41,8 @@ class _AccountScreenState extends State<AccountScreen> {
       final response = await http.post(
         Uri.parse('${apiEndpoint}user_login.php'),
         body: {
-          'email': widget.data_userAcc[0].email,
-          'password': widget.data_userAcc[0].password,
+          'email': widget.dataUserAcc[0].email,
+          'password': widget.dataUserAcc[0].password,
         },
       );
 
@@ -131,25 +132,29 @@ class _AccountScreenState extends State<AccountScreen> {
 
       final Map<String, dynamic> responseBody = json.decode(response.body);
 
-      if (responseBody['status'] == 'success') {
+      if (mounted) {
+        if (responseBody['status'] == 'success') {
+          showCustomSnackBar(
+            context: context,
+            message: responseBody['message'],
+            bgColor: Colors.green,
+          );
+        } else {
+          showCustomSnackBar(
+            context: context,
+            message: responseBody['message'],
+            bgColor: Colors.red,
+          );
+        }
+      }
+    } catch (error) {
+      if (mounted) {
         showCustomSnackBar(
           context: context,
-          message: responseBody['message'],
-          bgColor: Colors.green,
-        );
-      } else {
-        showCustomSnackBar(
-          context: context,
-          message: responseBody['message'],
+          message: 'Failed to update profile. Try again.',
           bgColor: Colors.red,
         );
       }
-    } catch (error) {
-      showCustomSnackBar(
-        context: context,
-        message: 'Failed to update profile. Try again.',
-        bgColor: Colors.red,
-      );
     }
   }
 
@@ -303,14 +308,14 @@ class _AccountScreenState extends State<AccountScreen> {
                     Expanded(
                       flex: 2,
                       child: buildTextBox(
-                        text: widget.data_userAcc[0].username,
+                        text: widget.dataUserAcc[0].username,
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       flex: 1,
                       child: buildTextBox(
-                        text: widget.data_userAcc[0].gender,
+                        text: widget.dataUserAcc[0].gender,
                       ),
                     ),
                   ],
@@ -318,7 +323,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 const SizedBox(height: 15),
                 buildLabelText('Email'),
                 buildTextBox(
-                  text: widget.data_userAcc[0].email,
+                  text: widget.dataUserAcc[0].email,
                 ),
                 const SizedBox(height: 15),
                 Row(
@@ -341,13 +346,13 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     Expanded(
                       child: buildTextBox(
-                        text: widget.data_userAcc[0].address,
+                        text: widget.dataUserAcc[0].address,
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: buildTextBox(
-                        text: widget.data_userAcc[0].mobile,
+                        text: widget.dataUserAcc[0].mobile,
                       ),
                     ),
                   ],
@@ -395,102 +400,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 Row(
                   children: [
                     Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext buildContext) {
-                              return Dialog(
-                                backgroundColor: cWhite,
-                                elevation: 50,
-                                child: Container(
-                                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 25),
-                                  height: 165,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Text(
-                                            'Delete Account',
-                                            style: GoogleFonts.merriweather(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Are you sure, You want to delete this account?',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.merriweather(fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          InkWell(
-                                            onTap: () async {
-                                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                                              await prefs.clear();
-                                              Get.off(() => const LoginForm());
-                                              _deleteProfile();
-                                            },
-                                            child: Text(
-                                              'Yes',
-                                              style: GoogleFonts.merriweather(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 75),
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'No',
-                                              style: GoogleFonts.merriweather(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.black87,
-                            border: Border.all(color: cWhite),
-                          ),
-                          height: 45,
-                          width: MediaQuery.of(context).size.width,
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Delete this Account',
-                            style: GoogleFonts.merriweather(
-                              color: cWhite,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
                       flex: 1,
                       child: InkWell(
                         highlightColor: Colors.transparent,
@@ -498,7 +407,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         onTap: () {
                           Get.to(
                             () => EditAccScreen(
-                              data_userAcc: dataUser,
+                              dataUserAcc: dataUser,
                             ),
                           );
                         },
@@ -521,7 +430,132 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          Get.to(
+                            () => ChangePasswordScreen(
+                              dataUserAcc: dataUser,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black87,
+                            border: Border.all(color: cWhite),
+                          ),
+                          height: 45,
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Change Password',
+                            style: GoogleFonts.merriweather(
+                              color: cWhite,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
+                ),
+                const SizedBox(height: 15),
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext buildContext) {
+                        return Dialog(
+                          backgroundColor: cWhite,
+                          elevation: 50,
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(15, 15, 15, 25),
+                            height: 165,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      'Delete Account',
+                                      style: GoogleFonts.merriweather(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Are you sure, You want to delete this account?',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.merriweather(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () async {
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        await prefs.clear();
+                                        Get.off(() => const LoginForm());
+                                        _deleteProfile();
+                                      },
+                                      child: Text(
+                                        'Yes',
+                                        style: GoogleFonts.merriweather(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 75),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'No',
+                                        style: GoogleFonts.merriweather(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.black87,
+                      border: Border.all(color: cWhite),
+                    ),
+                    height: 45,
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Delete this Account',
+                      style: GoogleFonts.merriweather(
+                        color: cWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 15),
               ],

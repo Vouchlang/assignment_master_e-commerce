@@ -10,9 +10,9 @@ import 'dart:convert';
 import 'account_model.dart';
 
 class EditAccScreen extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
+  final List<UserAcc> dataUserAcc;
 
-  const EditAccScreen({super.key, required this.data_userAcc});
+  const EditAccScreen({super.key, required this.dataUserAcc});
 
   @override
   State<EditAccScreen> createState() => _EditAccScreenState();
@@ -35,13 +35,13 @@ class _EditAccScreenState extends State<EditAccScreen> {
   @override
   void initState() {
     super.initState();
-    _userIdController = TextEditingController(text: widget.data_userAcc[0].userId.toString());
-    _usernameController = TextEditingController(text: widget.data_userAcc[0].username);
-    _passwordController = TextEditingController(text: widget.data_userAcc[0].password);
-    _emailController = TextEditingController(text: widget.data_userAcc[0].email);
-    _genderController = TextEditingController(text: widget.data_userAcc[0].gender);
-    _addressController = TextEditingController(text: widget.data_userAcc[0].address);
-    _mobileController = TextEditingController(text: widget.data_userAcc[0].mobile);
+    _userIdController = TextEditingController(text: widget.dataUserAcc[0].userId.toString());
+    _usernameController = TextEditingController(text: widget.dataUserAcc[0].username);
+    _passwordController = TextEditingController(text: widget.dataUserAcc[0].password);
+    _emailController = TextEditingController(text: widget.dataUserAcc[0].email);
+    _genderController = TextEditingController(text: widget.dataUserAcc[0].gender);
+    _addressController = TextEditingController(text: widget.dataUserAcc[0].address);
+    _mobileController = TextEditingController(text: widget.dataUserAcc[0].mobile);
   }
 
   Future<void> _updateProfile() async {
@@ -63,18 +63,22 @@ class _EditAccScreenState extends State<EditAccScreen> {
       final Map<String, dynamic> responseBody = json.decode(response.body);
 
       if (responseBody['status'] == 'success') {
-        showCustomSnackBar(
-          context: context,
-          message: responseBody['message'],
-          bgColor: Colors.green,
-        );
+        if (mounted) {
+          showCustomSnackBar(
+            context: context,
+            message: responseBody['message'],
+            bgColor: Colors.green,
+          );
+        }
       }
     } catch (error) {
-      showCustomSnackBar(
-        context: context,
-        message: 'Failed to update profile. Try again.',
-        bgColor: Colors.red,
-      );
+      if (mounted) {
+        showCustomSnackBar(
+          context: context,
+          message: 'Failed to update profile. Try again.',
+          bgColor: Colors.red,
+        );
+      }
     }
   }
 
@@ -117,7 +121,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
                 buildLabelText('Username'),
                 buildEditTextBox(
                   textController: _usernameController,
-                  text: widget.data_userAcc[0].username,
+                  text: widget.dataUserAcc[0].username,
                 ),
                 const SizedBox(height: 15),
                 buildLabelText('Password'),
@@ -132,7 +136,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
                     cursorColor: cSecondary,
                     controller: _passwordController,
                     style: GoogleFonts.merriweather(),
-                    onChanged: (value) => widget.data_userAcc[0].password = value,
+                    onChanged: (value) => widget.dataUserAcc[0].password = value,
                     obscureText: obscureText,
                     decoration: InputDecoration(
                       fillColor: cWhite,
@@ -172,19 +176,19 @@ class _EditAccScreenState extends State<EditAccScreen> {
                 buildLabelText('Gender'),
                 buildEditTextBox(
                   textController: _genderController,
-                  text: widget.data_userAcc[0].gender,
+                  text: widget.dataUserAcc[0].gender,
                 ),
                 const SizedBox(height: 15),
                 buildLabelText('Address'),
                 buildEditTextBox(
                   textController: _addressController,
-                  text: widget.data_userAcc[0].address,
+                  text: widget.dataUserAcc[0].address,
                 ),
                 const SizedBox(height: 15),
                 buildLabelText('Mobile Number'),
                 buildEditTextBox(
                   textController: _mobileController,
-                  text: widget.data_userAcc[0].mobile,
+                  text: widget.dataUserAcc[0].mobile,
                 ),
                 const SizedBox(height: 15),
                 InkWell(
@@ -207,7 +211,7 @@ class _EditAccScreenState extends State<EditAccScreen> {
 
                     Get.off(
                       () => BottomBar(
-                        data_userAcc: updatedUserData,
+                        dataUserAcc: updatedUserData,
                         currentIndex: 3,
                       ),
                     );

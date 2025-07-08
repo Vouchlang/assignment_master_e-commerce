@@ -9,9 +9,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SaveScreen extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
+  final List<UserAcc> dataUserAcc;
 
-  const SaveScreen({super.key, required this.data_userAcc});
+  const SaveScreen({super.key, required this.dataUserAcc});
 
   @override
   State<SaveScreen> createState() => _SaveScreenState();
@@ -33,8 +33,8 @@ class _SaveScreenState extends State<SaveScreen> {
       final response = await http.post(
         Uri.parse('${apiEndpoint}item_fetch.php'),
         body: {
-          'email': widget.data_userAcc[0].email,
-          'password': widget.data_userAcc[0].password,
+          'email': widget.dataUserAcc[0].email,
+          'password': widget.dataUserAcc[0].password,
         },
       );
       if (response.statusCode == 200) {
@@ -58,8 +58,8 @@ class _SaveScreenState extends State<SaveScreen> {
       final response = await http.post(
         Uri.parse('${apiEndpoint}item_remove.php'),
         body: {
-          'email': widget.data_userAcc[0].email,
-          'password': widget.data_userAcc[0].password,
+          'email': widget.dataUserAcc[0].email,
+          'password': widget.dataUserAcc[0].password,
           'productId': item.id.toString(),
         },
       );
@@ -108,8 +108,8 @@ class _SaveScreenState extends State<SaveScreen> {
       final response = await http.post(
         Uri.parse('${apiEndpoint}item_remove_all.php'),
         body: {
-          'email': widget.data_userAcc[0].email,
-          'password': widget.data_userAcc[0].password,
+          'email': widget.dataUserAcc[0].email,
+          'password': widget.dataUserAcc[0].password,
         },
       );
 
@@ -140,8 +140,8 @@ class _SaveScreenState extends State<SaveScreen> {
     final response = await http.post(
       Uri.parse('${apiEndpoint}cart_insert.php'),
       body: {
-        'email': widget.data_userAcc[0].email,
-        'password': widget.data_userAcc[0].password,
+        'email': widget.dataUserAcc[0].email,
+        'password': widget.dataUserAcc[0].password,
         'productId': itemIndex.toString(),
         'quantity': '1',
       },

@@ -74,7 +74,7 @@ class _LoginFormState extends State<LoginForm> {
             await prefs.clear();
           }
 
-          Get.off(() => BottomBar(data_userAcc: dataUser));
+          Get.off(() => BottomBar(dataUserAcc: dataUser));
         } else {
           return;
         }
@@ -120,7 +120,7 @@ class _LoginFormState extends State<LoginForm> {
             );
             dataUser.add(userModel);
           }
-          Get.off(() => BottomBar(data_userAcc: dataUser));
+          Get.off(() => BottomBar(dataUserAcc: dataUser));
         }
       }
     }

@@ -9,11 +9,11 @@ import 'Home/home_screen.dart';
 import 'Save/save_screen.dart';
 
 class BottomBar extends StatefulWidget {
-  final List<UserAcc> data_userAcc;
+  final List<UserAcc> dataUserAcc;
   final int currentIndex;
   const BottomBar({
     super.key,
-    required this.data_userAcc,
+    required this.dataUserAcc,
     this.currentIndex = 0,
   });
 
@@ -31,10 +31,10 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   late List<Widget> pages = [
-    HomeScreen(data_userAcc: widget.data_userAcc),
-    SaveScreen(data_userAcc: widget.data_userAcc),
-    CartScreen(data_userAcc: widget.data_userAcc),
-    AccountScreen(data_userAcc: widget.data_userAcc),
+    HomeScreen(dataUserAcc: widget.dataUserAcc),
+    SaveScreen(dataUserAcc: widget.dataUserAcc),
+    CartScreen(dataUserAcc: widget.dataUserAcc),
+    AccountScreen(dataUserAcc: widget.dataUserAcc),
   ];
 
   @override

@@ -98,3 +98,60 @@ Widget buildSpp(
     ),
   );
 }
+
+Widget buildChangePsw({
+  required final TextEditingController controller,
+  required final bool obscureText,
+  required String psw,
+  required final String txtValidator,
+  required Function() onTap,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: cWhite,
+    ),
+    child: TextFormField(
+      textAlign: TextAlign.start,
+      cursorColor: cSecondary,
+      controller: controller,
+      style: GoogleFonts.merriweather(),
+      onChanged: (value) => psw = value,
+      obscureText: obscureText,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return txtValidator;
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        fillColor: cWhite,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 5,
+        ),
+        suffix: InkWell(
+          splashColor: Colors.transparent,
+          onTap: onTap,
+          child: Icon(
+            obscureText ? Icons.visibility : Icons.visibility_off,
+            color: cSecondary,
+            size: 18,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: cSecondary,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: cSecondary,
+          ),
+        ),
+      ),
+    ),
+  );
+}
